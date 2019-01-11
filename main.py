@@ -3,7 +3,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 import numpy as np
 from shader import ShaderProgram
-from model import Model
+from model import Model, ModelFromExport
 import glm
 import time
 from camera3D import Camera3D
@@ -77,6 +77,8 @@ def generate_grid_mesh(min, max, step=1.0):
 
 
 def init():
+    # print(ver[0:9])
+
     vertices = np.array([
         -0.5, -0.5, -0.5, 0.0, 0.0,
         0.5, -0.5, -0.5, 1.0, 0.0,
@@ -137,10 +139,12 @@ def init():
     shader_program.init()
 
     global rec_model
-    rec_model = Model(vertices, None, "textures/awesomeface.png")  # "textures/awesomeface.png"
+    # rec_model = Model([vertices], None, [["textures/awesomeface.png"]])  # "textures/awesomeface.png"
+
+    rec_model = ModelFromExport("models/hair.obj", vertex_format="VTN")
 
     global grid_model
-    grid_model = Model(grid_vertices, grid_mesh, None)
+    grid_model = Model([grid_vertices], indices=[grid_mesh])
 
     glEnable(GL_DEPTH_TEST)
 
@@ -148,12 +152,12 @@ def init():
 def drawFunc():
     glClearColor(1.0, 1.0, 1.0, 0.0)
     glClearDepth(1.0)
-    # glPointSize(5)
+    glPointSize(5)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     current_frame = glutGet(GLUT_ELAPSED_TIME)
 
-    projection = glm.perspective(glm.radians(camera.zoom), SCR_WIDTH * 1.0 / SCR_HEIGHT, 0.1, 100)
+    projection = glm.perspective(glm.radians(camera.zoom), SCR_WIDTH * 1.0 / SCR_HEIGHT, 0.1, 200)
 
     view = camera.get_view_matrix()
 
@@ -164,9 +168,12 @@ def drawFunc():
     for position in cube_positions:
         m = glm.mat4(1.0)
         m = glm.translate(m, position)
-        m = glm.rotate(m, glm.radians(glutGet(GLUT_ELAPSED_TIME) / 10), glm.vec3(1.0, 1.0, -1.0))
+        # m = glm.rotate(m, glm.radians(glutGet(GLUT_ELAPSED_TIME) / 10), glm.vec3(1.0, 1.0, -1.0))
+
+        m = glm.scale(m, glm.vec3(1))
         shader_program.set_matrix("model", glm.value_ptr(m))
         rec_model.draw(shader_program, draw_type=GL_TRIANGLES)
+        break
 
     for position in grid_position:
         # for position in cubePositions:
