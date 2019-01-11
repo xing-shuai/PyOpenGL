@@ -10,3 +10,6 @@ Some OpenGL Code Implementation in Python (PyOpenGL)
 
 ### demo
 ![image not found](https://github.com/xing-shuai/PyOpenGL/blob/master/examples/demo.gif "demo.gif")
+
+### load model from obj file
+![image not found](https://github.com/xing-shuai/PyOpenGL/blob/master/examples/hair_model.png "hair_model.png")
